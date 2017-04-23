@@ -22,24 +22,50 @@ class Client
      */
     public static function get(string $uri, array $headers = []) :string
     {
-        return self::sendCurl($uri, $headers);
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->setUri($uri);
+        $request->setHeaders($headers);
+
+        return self::sendCurl($request);
+    }
+
+    /**
+     * @param string $uri
+     * @param array  $headers
+     * @param array  $data
+     * @return string
+     */
+    public static function post(string $uri, array $headers = [], array $data = []) :string
+    {
+        $request = new Request();
+        $request->setMethod('GET');
+        $request->setUri($uri);
+        $request->setHeaders($headers);
+        $request->setBody($data);
+
+        return self::sendCurl($request);
     }
 
     /**
      * Send request within curl
      *
-     * @param string   $uri
-     * @param string[] $headers
+     * @param Request $request
      * @return string
+     * @codeCoverageIgnore
      */
-    protected static function sendCurl(string $uri, $headers) :string
+    protected static function sendCurl(Request $request) :string
     {
-        $ch = curl_init($uri);
+        $ch = curl_init($request->getUri());
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        if (!empty($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        if (!empty($request->getHeaders())) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $request->getHeaders());
+        }
+
+        if ($request->getMethod() === 'POST' && !empty($request->getBody())) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $request->getBody());
         }
 
         $response = curl_exec($ch);

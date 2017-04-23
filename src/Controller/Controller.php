@@ -8,12 +8,12 @@
 namespace Faulancer\Controller;
 
 use Faulancer\Http\Request;
+use Faulancer\Http\Response;
 use Faulancer\Service\AuthenticatorService;
 use Faulancer\Service\DbService;
 use Faulancer\Service\HttpService;
 use Faulancer\Service\SessionManagerService;
 use Faulancer\ServiceLocator\ServiceInterface;
-use Faulancer\Session\SessionManager;
 use Faulancer\View\ViewController;
 use Faulancer\ServiceLocator\ServiceLocator;
 
@@ -32,7 +32,7 @@ abstract class Controller
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * Controller constructor.
@@ -97,11 +97,11 @@ abstract class Controller
      *
      * @param  string $template
      * @param  array $variables
-     * @return string
+     * @return Response
      */
-    public function render(string $template = '', $variables = []) :string
+    public function render(string $template = '', $variables = []) :Response
     {
-        return $this->getView()->setTemplate($template)->setVariables($variables)->render();
+        return new Response($this->getView()->setTemplate($template)->setVariables($variables)->render());
     }
 
     /**

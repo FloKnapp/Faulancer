@@ -16,7 +16,7 @@ class FormRequestTest extends TestCase
 {
 
     /**
-     *
+     * @backupGlobals disabled
      */
     public function testSuccessFormHandling()
     {
@@ -34,13 +34,16 @@ class FormRequestTest extends TestCase
 
         $dispatcher = new Dispatcher($request, $config);
 
-        $result = $dispatcher->run();
+        $result = $dispatcher->dispatch();
+
+        unset($_POST['text/name']);
+        unset($_POST['email/email']);
 
         $this->assertSame('testSuccess', $result);
     }
 
     /**
-     * 
+     * @backupGlobals disabled
      */
     public function testInvalidFormHandling()
     {
@@ -58,7 +61,10 @@ class FormRequestTest extends TestCase
 
         $dispatcher = new Dispatcher($request, $config);
 
-        $result = $dispatcher->run();
+        $result = $dispatcher->dispatch();
+
+        unset($_POST['text/name']);
+        unset($_POST['email/email']);
 
         $this->assertSame('testError', $result);
     }
